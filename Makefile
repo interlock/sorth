@@ -3,8 +3,8 @@ SHELL := bash
 .ONESHELL:
 .DEFAULT_GOAL := help
 
-MAKEFLAGS += --warn-undefined-variables
-MAKEFLAGS += --no-builtin-rules
+# MAKEFLAGS += --warn-undefined-variables
+# MAKEFLAGS += --no-builtin-rules
 
 help:  ## Help
 	@grep -E -H '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
