@@ -10,20 +10,26 @@ SOURCEDIR := src
 DISTDIR := dist
 
 SOURCES := $(wildcard $(SOURCEDIR)/*.cpp)
-
-OS := $(shell uname -s)
+ifeq ($(OS),Windows_NT)
+	OS := Windows
+else
+	OS := $(shell uname -s)
+endif
 ifeq ($(OS),Darwin)
 	ARCH ?= $(shell arch)
 	ifeq ($(ARCH),arm64)
 		ARCH := arm64e
 	endif
-else
+else ifeq ($(OS),Linux)
+	ARCH ?= $(shell uname -m)
+else iferq ($(OS),Windows)
 	ARCH ?= $(shell uname -m)
 endif
 
 
 BUILDFLAGS += "-std=c++20"
 BUILDFLAGS += "-O3"
+BUILDFLAGS += "-arch $(ARCH)"
 
 default: build build/sorth copy_stdlib ## Default
 
@@ -38,12 +44,10 @@ help:  ## Help
 		column -t -s '%%%'
 
 $(BUILD)/sorth: build $(SOURCES) ## Build binary
-
 	clang++ \
 		$(BUILDFLAGS) \
-		-arch $(ARCH) \
 		$(SOURCES) \
-		-o $@
+		-o ./$@
 	strip ./$@
 
 .PHONY: build 
