@@ -3,6 +3,13 @@ SHELL := bash
 .ONESHELL:
 .DEFAULT_GOAL := help
 
+OS := $(shell uname -s)
+ifeq ($(OS),Darwin)
+	ARCH ?= $(shell arch)
+else
+	ARCH ?= $(shell uname -m)
+endif
+
 # MAKEFLAGS += --warn-undefined-variables
 # MAKEFLAGS += --no-builtin-rules
 
@@ -14,6 +21,7 @@ help:  ## Help
 sorth: src/*.cpp ## Build
 	clang++ \
 		-std=c++20 \
+		-arch $(ARCH) \
 		$^ \
 		-O3 \
 		-o $@
