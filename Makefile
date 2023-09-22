@@ -3,6 +3,12 @@ SHELL := bash
 .ONESHELL:
 .DEFAULT_GOAL := help
 
+BUILD := build
+SOURCEDIR := src
+DISTDIR := dist
+
+SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
+
 OS := $(shell uname -s)
 ifeq ($(OS),Darwin)
 	ARCH ?= $(shell arch)
@@ -12,20 +18,39 @@ endif
 
 # MAKEFLAGS += --warn-undefined-variables
 # MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += "-std=c++20 -03"
+
+default: build build/sorth copy_stdlib ## Default
+
+.PHONY: build
+dist: default ## Dist
+	install -d $(DISTDIR)
+	zip -r $(DISTDIR)/sorth.zip $(BUILD)/*
 
 help:  ## Help
 	@grep -E -H '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		sed -n 's/^.*:\(.*\): \(.*\)##\(.*\)/\1%%%\3/p' | \
 		column -t -s '%%%'
 
-sorth: src/*.cpp ## Build
+$(BUILD)/sorth: build $(SOURCES) ## Build binary
+# -arch $(ARCH) 
 	clang++ \
+		$(MAKEFLAGS) \
 		-std=c++20 \
-		-arch $(ARCH) \
-		$^ \
+		$(SOURCES) \
 		-O3 \
 		-o $@
 	strip ./$@
 
+.PHONY: build 
+ $(BUILD):
+	mkdir -p $(BUILD) || true
+
+copy_stdlib: build std.f std/* ## Copy stdlib to build directory
+	cp std.f $(BUILD)
+	cp -r std $(BUILD)
+
+.PHONY: clean
 clean: ## Clean
-	rm -f sorth
+	rm -rf build || true
+	rm -rf dist || true
