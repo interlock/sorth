@@ -18,7 +18,7 @@ endif
 
 # MAKEFLAGS += --warn-undefined-variables
 # MAKEFLAGS += --no-builtin-rules
-MAKEFLAGS += "-std=c++20 -03"
+MAKEFLAGS += "-std=c++20 -O3"
 
 default: build build/sorth copy_stdlib ## Default
 
@@ -33,18 +33,17 @@ help:  ## Help
 		column -t -s '%%%'
 
 $(BUILD)/sorth: build $(SOURCES) ## Build binary
-# -arch $(ARCH) 
+
 	clang++ \
 		$(MAKEFLAGS) \
-		-std=c++20 \
+		-arch $(ARCH) 
 		$(SOURCES) \
-		-O3 \
 		-o $@
 	strip ./$@
 
 .PHONY: build 
  $(BUILD):
-	mkdir -p $(BUILD) || true
+	install -d $(BUILD) || true
 
 copy_stdlib: build std.f std/* ## Copy stdlib to build directory
 	cp std.f $(BUILD)
