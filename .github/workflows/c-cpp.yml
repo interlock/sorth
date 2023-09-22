@@ -28,6 +28,6 @@ jobs:
         # Artifact name
         name: sorth-${{ matrix.os }}-${{ matrix.arch }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        # path: 
+        path: sorth-${{ matrix.os }}-${{ matrix.arch }}
         # The desired behavior if no files are found using the provided path.
   
