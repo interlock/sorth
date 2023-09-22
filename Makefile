@@ -14,6 +14,9 @@ SOURCES := $(wildcard $(SOURCEDIR)/*.cpp)
 OS := $(shell uname -s)
 ifeq ($(OS),Darwin)
 	ARCH ?= $(shell arch)
+	ifeq ($(ARCH),arm64)
+		ARCH := arm64e
+	endif
 else
 	ARCH ?= $(shell uname -m)
 endif
