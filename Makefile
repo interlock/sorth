@@ -2,12 +2,14 @@ SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c  
 .ONESHELL:
 .DEFAULT_GOAL := help
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
 
 BUILD := build
 SOURCEDIR := src
 DISTDIR := dist
 
-SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
+SOURCES := $(wildcard $(SOURCEDIR)/*.cpp)
 
 OS := $(shell uname -s)
 ifeq ($(OS),Darwin)
@@ -16,9 +18,9 @@ else
 	ARCH ?= $(shell uname -m)
 endif
 
-# MAKEFLAGS += --warn-undefined-variables
-# MAKEFLAGS += --no-builtin-rules
-MAKEFLAGS += "-std=c++20 -O3"
+
+BUILDFLAGS += "-std=c++20"
+BUILDFLAGS += "-O3"
 
 default: build build/sorth copy_stdlib ## Default
 
@@ -35,8 +37,8 @@ help:  ## Help
 $(BUILD)/sorth: build $(SOURCES) ## Build binary
 
 	clang++ \
-		$(MAKEFLAGS) \
-		-arch $(ARCH) 
+		$(BUILDFLAGS) \
+		-arch $(ARCH) \
 		$(SOURCES) \
 		-o $@
 	strip ./$@
