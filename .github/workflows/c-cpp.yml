@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: make 
-      run: make sorth
+      run: make default
       env:
         ARCH: ${{ matrix.arch }}
     - name: mv
